@@ -7,7 +7,118 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+## Configuracion
+
+En el archivo .env cambiar 
+
+```
+BROADCAST_DRIVE=redis
+QUEUE_CONNECTION=redis
+LARAVEL_ECHO_PORT=6001
+```
+
+En el archivo config/databases.php
+
+Eliminamos la configuracion actual para redis y la reemplzamos por:
+
+```
+    'redis' => [
+
+        'client' => 'predis',
+
+        'default' => [
+            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', 6379),
+            'database' => 0,
+        ],
+    ],
+```
+
+### Instalar laravel-echo-server
+
+En la consola y en la raiz del proyecto tipear
+
+`npm install -g laravel-echo-server`
+
+Luego:
+
+`laravel-echo-server init`
+
+Este ultimo comando inicializara un asistence para crear el archivo de confiuracion para laravel-echo-server
+
+Abrimos el archivo laravel-echo-server.json y debemos reemplzar el contenido por ese codigo: 
+
+```
+{
+	"authHost": "http://localhost:8000",
+	"authEndpoint": "/broadcasting/auth",
+	"clients": [],
+	"database": "redis",
+	"databaseConfig": {
+		"redis": {},
+		"sqlite": {
+			"databasePath": "/database/laravel-echo-server.sqlite"
+		}
+	},
+	"devMode": true,
+	"host": "127.0.0.1",
+	"port": "6001",
+	"protocol": "http",
+	"socketio": {},
+	"secureOptions": 67108864,
+	"sslCertPath": "",
+	"sslKeyPath": "",
+	"sslCertChainPath": "",
+	"sslPassphrase": "",
+	"subscribers": {
+		"http": true,
+		"redis": true
+	},
+	"apiOriginAllow": {
+		"allowCors": false,
+		"allowOrigin": "",
+		"allowMethods": "",
+		"allowHeaders": ""
+	}
+}
+
+```
+
+### Socket.io
+
+Ejecutar en la consola el siguiente comando 
+
+`npm install laravel-echo socket.io-client --save`
+
+En el archivo ubicado en resources/js/bootstrap.js
+
+Agregar esto al final
+
+```
+import Echo from 'laravel-echo';
+
+// window.Pusher = require('pusher-js');
+
+window.Echo = new Echo({
+     broadcaster: 'socket.io',
+     host: `${window.location.hostname}:${window.laravelEchoPort}`,
+     transports: ['websocket']
+});
+```
+
+Ejecutar 
+`yarn dev`
+
+
+
+
+<hr>
+
+
+
+
+
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
