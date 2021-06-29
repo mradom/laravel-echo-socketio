@@ -111,6 +111,22 @@ Ejecutar
 `yarn dev`
 
 
+Agregar Configuración en Nginx
+```
+    #the following would go within the server{} block of your web server config
+    location /socket.io {
+        proxy_pass http://localhost:6001; #could be localhost if Echo and NginX are on the same box
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+    }
+
+``` 
+
+Generar Claves de acceso para la app
+```
+php artisan passport:client --password
+```
 
 
 <hr>
